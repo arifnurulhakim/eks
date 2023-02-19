@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHargasTable extends Migration
+class CreateCustomersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateHargasTable extends Migration
      */
     public function up()
     {
-        Schema::create('hargas', function (Blueprint $table) {
-            $table->increments('id_harga');
+        Schema::create('customers', function (Blueprint $table) {
+            $table->increments('id_customer');
             $table->string('nama_customer');
-            $table->text('alamat_customer')->nullable();
-            $table->string('nama_penerima');
-            $table->text('alamat_penerima')->nullable();
-            $table->double('harga');
+            $table->string('alamat_customer');
+            $table->string('telepon_customer');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateHargasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hargas');
+        Schema::dropIfExists('customers');
     }
 }

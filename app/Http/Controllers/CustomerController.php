@@ -3,32 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Harga;
 use App\Models\Customer;
-use App\Models\Penerima;
 
-class HargaController extends Controller
+class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::all();
-        $penerimas = Penerima::all();
-                
-        return view('harga.index', compact('customers', 'penerimas'));
+        return view('customer.index');
     }
 
     public function data()
     {
-        $harga = Harga::orderBy('id_harga', 'desc')->get();
+        $customer = Customer::orderBy('id_customer', 'desc')->get();
 
         return datatables()
-            ->of($harga)
+            ->of($customer)
             ->addIndexColumn()
-            ->addColumn('aksi', function ($harga) {
+            ->addColumn('aksi', function ($customer) {
                 return '
                 <div class="btn-group">
-                    <button type="button" onclick="editForm(`'. route('harga.update', $harga->id_harga) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`'. route('harga.destroy', $harga->id_harga) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                    <button type="button" onclick="editForm(`'. route('customer.update', $customer->id_customer) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
+                    <button type="button" onclick="deleteData(`'. route('customer.destroy', $customer->id_customer) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>
                 ';
             })
@@ -54,23 +49,8 @@ class HargaController extends Controller
      */
     public function store(Request $request)
     {
+        $customer = Customer::create($request->all());
 
-        
-        $get_customer = $request->nama_customer;
-        $get_penerima = $request->nama_penerima;
-
-        $customer = Customer::where('nama_customer', $get_customer)->first();
-        $penerima = Penerima::where('nama_penerima', $get_penerima)->first();
-
-        if(!empty($customer)||!empty($penerima)){
-            $harga = new Harga();
-            $harga->nama_customer = $request->nama_customer;
-            $harga->alamat_customer = $customer->alamat_customer;
-            $harga->nama_penerima = $request->nama_penerima;
-            $harga->alamat_penerima = $penerima->alamat_penerima;
-            $harga->harga = $request->harga;
-            $harga->save();
-        }
         return response()->json('Data berhasil disimpan', 200);
     }
 
@@ -82,9 +62,9 @@ class HargaController extends Controller
      */
     public function show($id)
     {
-        $harga = Harga::find($id);
+        $customer = Customer::find($id);
 
-        return response()->json($harga);
+        return response()->json($customer);
     }
 
     /**
@@ -107,7 +87,7 @@ class HargaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $harga = Harga::find($id)->update($request->all());
+        $customer = Customer::find($id)->update($request->all());
 
         return response()->json('Data berhasil disimpan', 200);
     }
@@ -120,7 +100,7 @@ class HargaController extends Controller
      */
     public function destroy($id)
     {
-        $harga = Harga::find($id)->delete();
+        $customer = Customer::find($id)->delete();
 
         return response(null, 204);
     }

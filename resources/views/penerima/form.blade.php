@@ -10,29 +10,30 @@
                             aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title"></h4>
                 </div>
+                
                 <div class="modal-body">
-                <div class="form-group row">
-                    <label for="kode_tanda_penerima" class="col-lg-2 col-lg-offset-1 control-label">Kode Tanda Terima</label>
-                    <div class="col-lg-6">
-                        <select name="kode_tanda_penerima" id="kode_tanda_penerima" class="form-control" required autofocus>
-                            <option value="">-- Pilih Kode Tanda Terima --</option>
-                            @foreach($orderans as $orderan)
-                            <option value="{{ $orderan->kode_tanda_penerima }}">{{ $orderan->kode_tanda_penerima }}</option>
-                            @endforeach
-                        </select>
-                        <span class="help-block with-errors"></span>
-                    </div>
-                </div>
-
-
                     <div class="form-group row">
-                        <label for="nomor_sa" class="col-lg-2 col-lg-offset-1 control-label">Nomor Surat Angkut</label>
+                        <label for="nama" class="col-lg-2 col-lg-offset-1 control-label">Nama penerima</label>
                         <div class="col-lg-6">
-                            <input type="text" name="nomor_sa" id="nomor_sa" class="form-control"  required>
+                            <input type="text" name="nama_penerima" id="nama_penerima" class="form-control" required autofocus>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
-                    
+                    <div class="form-group row">
+                        <label for="telepon" class="col-lg-2 col-lg-offset-1 control-label">Telepon penerima</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="telepon_penerima" id="telepon_penerima" class="form-control" required>
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="alamat" class="col-lg-2 col-lg-offset-1 control-label">Alamat penerima</label>
+                        <div class="col-lg-6">
+                            <textarea name="alamat_penerima" id="alamat_penerima" rows="3" class="form-control"></textarea>
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i> Simpan</button>
@@ -42,11 +43,3 @@
         </form>
     </div>
 </div>
-
-<script>
-  const inputElement = document.getElementById("nomor_sa");
-  inputElement.addEventListener("input", function(event) {
-    const inputValue = event.target.value;
-    event.target.value = inputValue.replace(/[^0-9]/g, "");
-  });
-</script>

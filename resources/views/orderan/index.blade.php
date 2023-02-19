@@ -15,7 +15,10 @@
         <div class="box">
             <div class="box-header with-border">
                 <button onclick="addForm('{{ route('orderan.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
+                <a href="{{ route('orderan.exportCSV') }}" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-file-excel-o"></i> Export CSV</a>
             </div>
+            
+            
 
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-produk">
@@ -169,6 +172,11 @@
                 });
         }
     }
+    function exportPDF(url) {
+        window.location.href = url;
+    }
+   
+
 
     // function deleteSelected(url) {
     //     if ($('input:checked').length > 1) {

@@ -45,6 +45,16 @@
                 </a>
             </li> --}}
             <li>
+                <a href="{{ route('customer.index') }}">
+                    <i class="fa fa-truck"></i> <span>customer</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('penerima.index') }}">
+                    <i class="fa fa-truck"></i> <span>penerima</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('harga.index') }}">
                     <i class="fa fa-truck"></i> <span>Harga</span>
                 </a>
@@ -56,7 +66,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('sa.index') }}">
+                <a href="{{ route('surat_angkut.index') }}">
                     <i class="fa fa-truck"></i> <span>Surat Angkut</span>
                 </a>
             </li>

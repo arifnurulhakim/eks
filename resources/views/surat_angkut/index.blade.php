@@ -1,12 +1,12 @@
 @extends('layouts.master')
 
 @section('title')
-    Daftar sa
+    Daftar surat angkut
 @endsection
 
 @section('breadcrumb')
     @parent
-    <li class="active">Daftar sa</li>
+    <li class="active">Daftar surat angkut</li>
 @endsection
 
 @section('content')
@@ -14,9 +14,9 @@
     <div class="col-lg-12">
         <div class="box">
             <div class="box-header with-border">
-                <button onclick="addForm('{{ route('sa.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
+                <button onclick="addForm('{{ route('surat_angkut.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
+                <a href="{{ route('surat_angkut.exportCSV') }}" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-file-excel-o"></i> Export CSV</a>
             </div>
-
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-produk">
                     @csrf
@@ -25,7 +25,7 @@
                            
                             <th width="5%">No</th>
                             <th>Kode Tanda Penerima</th>
-                            <th>Nomor SA</th>
+                            <th>Nomor surat angkut</th>
                             <th>nama customer</th>
                             <th>alamat customer</th>
                             <th>telepon customer</th>
@@ -66,7 +66,7 @@
             serverSide: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('sa.data') }}',
+                url: '{{ route('surat_angkut.data') }}',
             },
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
@@ -169,6 +169,9 @@
                     return;
                 });
         }
+    }
+    function exportPDF(url) {
+        window.location.href = url;
     }
 
     // function deleteSelected(url) {

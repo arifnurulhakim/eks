@@ -15,6 +15,7 @@
         <div class="box">
             <div class="box-header with-border">
                 <button onclick="addForm('{{ route('dm.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
+                <a href="{{ route('dm.exportCSV') }}" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-file-excel-o"></i> Export CSV</a>
             </div>
 
             <div class="box-body table-responsive">

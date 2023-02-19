@@ -17,17 +17,18 @@ class HargaTableSeeder extends Seeder
             [
                 'nama_customer' => 'arip',
                 'alamat_customer' => 'bandung',
+                'nama_penerima' => 'yudi',
                 'alamat_penerima' => 'garut',
-                'telepon_customer' => '082118114645',
                 'harga' => '100000'
                 
             ],
             [
                 'nama_customer' => 'yudi',
                 'alamat_customer' => 'bandung',
+                'nama_penerima' => 'arip',
                 'alamat_penerima' => 'garut',
-                'telepon_customer' => '082118114645',
-                'harga' => '100000'
+                
+                'harga' => '200000'
             ]
         );
 

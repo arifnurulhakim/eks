@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             SuratAngkutTableSeeder::class,
             OrderanTableSeeder::class,
             DaftarMuatTableSeeder::class,
+            PenerimaTableSeeder::class,
+            CustomerTableSeeder::class,
         ]);
     }
 }

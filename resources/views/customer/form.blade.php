@@ -12,42 +12,32 @@
                 </div>
                 
                 <div class="modal-body">
-                    
                     <div class="form-group row">
                         <label for="nama" class="col-lg-2 col-lg-offset-1 control-label">Nama customer</label>
                         <div class="col-lg-6">
-                            <select name="nama_customer" id="nama_customer" class="form-control" required autofocus>
-                                <option value="">-- Pilih Nama Customer --</option>
-                                @foreach($customers as $customer)
-                                <option value="{{ $customer->nama_customer }}">{{ $customer->nama_customer }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" name="nama_customer" id="nama_customer" class="form-control" required autofocus>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="nama" class="col-lg-2 col-lg-offset-1 control-label">Nama penerima</label>
+                        <label for="telepon" class="col-lg-2 col-lg-offset-1 control-label">Telepon customer</label>
                         <div class="col-lg-6">
-                            <select name="nama_penerima" id="nama_penerima" class="form-control" required autofocus>
-                                <option value="">-- Pilih Nama penerima --</option>
-                                @foreach($penerimas as $penerima)
-                                <option value="{{ $penerima->nama_penerima }}">{{ $penerima->nama_penerima }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" name="telepon_customer" id="telepon_customer" class="form-control" required>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
-
                     <div class="form-group row">
-                        <label for="harga" class="col-lg-2 col-lg-offset-1 control-label">Harga</label>
+                        <label for="alamat" class="col-lg-2 col-lg-offset-1 control-label">Alamat customer</label>
                         <div class="col-lg-6">
-                            <input type="number" name="harga" id="harga" class="form-control">
+                            <textarea name="alamat_customer" id="alamat_customer" rows="3" class="form-control"></textarea>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
+                    
+                    
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i> Simpan</button>
+                    <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i>Simpan</button>
                     <button type="button" class="btn btn-sm btn-flat btn-warning" data-dismiss="modal"><i class="fa fa-arrow-circle-left"></i> Batal</button>
                 </div>
             </div>

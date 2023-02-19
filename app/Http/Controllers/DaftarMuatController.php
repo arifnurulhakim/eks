@@ -24,8 +24,8 @@ class DaftarMuatController extends Controller
             ->addColumn('aksi', function ($daftar_muat) {
                 return '
                 <div class="btn-group">
-                    <button type="button" onclick="editForm(`'. route('sa.update', $daftar_muat->id_dm) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`'. route('sa.destroy', $daftar_muat->id_dm) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                    <button type="button" onclick="editForm(`'. route('dm.update', $daftar_muat->id_dm) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
+                    <button type="button" onclick="deleteData(`'. route('dm.destroy', $daftar_muat->id_dm) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>
                 ';
             })
@@ -168,17 +168,56 @@ class DaftarMuatController extends Controller
         return response(null, 204);
     }
 
-    // public function cetakBarcode(Request $request)
+    // public function exportCSV()
     // {
-    //     $dataproduk = array();
-    //     foreach ($request->id_produk as $id) {
-    //         $produk = Produk::find($id);
-    //         $dataproduk[] = $produk;
-    //     }
-
-    //     $no  = 1;
-    //     $pdf = PDF::loadView('produk.barcode', compact('dataproduk', 'no'));
-    //     $pdf->setPaper('a4', 'potrait');
-    //     return $pdf->stream('produk.pdf');
+        
+        
+    //     $headers = [
+    //         'Content-Type' => 'text/csv',
+    //         'Content-Disposition' => 'attachment; filename="dm_' . date('Ymd_His') . '.csv"',
+    //     ];
+    
+    //     $callback = function () use ($daftar_muat) {
+    //         $file = fopen('php://output', 'w');
+    //         fputcsv($file, array_keys($daftar_muat[0]));
+    //         foreach ($daftar_muat as $row) {
+    //             fputcsv($file, $row);
+    //         }
+    //         fclose($file);
+    //     };
+    
+    //     return response()->stream($callback, 200, $headers);
     // }
+
+    public function exportCSV()
+{
+    $daftar_muat = Daftar_muat::get()->toArray();
+
+    $total_berat = 0;
+    $total_semua_harga = 0;
+    foreach($daftar_muat as $dm) {
+        $total_berat += $dm['berat_barang'];
+        $total_semua_harga += $dm['total_harga'];
+    }
+    $daftar_muat[] = ['', '', '', '', '', ''];
+    $daftar_muat[] = ['Total Berat', $total_berat, '', '', '', ''];
+    $daftar_muat[] = ['Total Semua Harga',  $total_semua_harga, '', '', ''];
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="dm_' . date('Ymd_His') . '.csv"',
+    ];
+
+    $callback = function () use ($daftar_muat) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, array_keys($daftar_muat[0]));
+        foreach ($daftar_muat as $row) {
+            fputcsv($file, $row);
+        }
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
+
 }

@@ -1,12 +1,12 @@
 @extends('layouts.master')
 
 @section('title')
-    Daftar Harga
+    Daftar Customer
 @endsection
 
 @section('breadcrumb')
     @parent
-    <li class="active">Daftar Harga</li>
+    <li class="active">Daftar Customer</li>
 @endsection
 
 @section('content')
@@ -14,17 +14,15 @@
     <div class="col-lg-12">
         <div class="box">
             <div class="box-header with-border">
-                <button onclick="addForm('{{ route('harga.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
+                <button onclick="addForm('{{ route('customer.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i>Tambah</button>
             </div>
             <div class="box-body table-responsive">
                 <table class="table table-stiped table-bordered">
                     <thead>
                         <th width="5%">No</th>
                         <th>Nama customer</th>
+                        <th>Telepon customer</th>
                         <th>Alamat customer</th>
-                        <th>Nama Penerima</th>
-                        <th>Alamat penerima</th>
-                        <th>Harga</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
                     </thead>
                 </table>
@@ -33,7 +31,7 @@
     </div>
 </div>
 
-@includeIf('harga.form')
+@includeIf('customer.form')
 @endsection
 
 @push('scripts')
@@ -47,15 +45,13 @@
             serverSide: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('harga.data') }}',
+                url: '{{ route('customer.data') }}',
             },
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'nama_customer'},
+                {data: 'telepon_customer'},
                 {data: 'alamat_customer'},
-                {data: 'nama_penerima'},
-                {data: 'alamat_penerima'},
-                {data: 'harga'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });
@@ -77,7 +73,7 @@
 
     function addForm(url) {
         $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Tambah Harga');
+        $('#modal-form .modal-title').text('Tambah customer');
 
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);
@@ -87,7 +83,7 @@
 
     function editForm(url) {
         $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Edit Harga');
+        $('#modal-form .modal-title').text('Edit customer');
 
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);
@@ -97,10 +93,9 @@
         $.get(url)
             .done((response) => {
                 $('#modal-form [name=nama_customer]').val(response.nama_customer);
+                $('#modal-form [name=telepon_customer]').val(response.telepon_customer);
                 $('#modal-form [name=alamat_customer]').val(response.alamat_customer);
-                $('#modal-form [name=nama_penerima]').val(response.nama_penerima);
-                $('#modal-form [name=alamat_penerima]').val(response.alamat_penerima);
-                $('#modal-form [name=harga]').val(response.harga);
+
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data');

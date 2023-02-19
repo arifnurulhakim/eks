@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Orderan;
 use App\Models\Harga;
+use League\Csv\Writer;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 class OrderanController extends Controller
 {
     public function index()
@@ -24,6 +27,7 @@ class OrderanController extends Controller
                 <div class="btn-group">
                     <button type="button" onclick="editForm(`'. route('orderan.update', $orderan->id_orderan) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
                     <button type="button" onclick="deleteData(`'. route('orderan.destroy', $orderan->id_orderan) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                    <button type="button" onclick="exportPDF(`'. route('orderan.exportPDF', $orderan->id_orderan) .'`)" class="btn btn-xs btn-success btn-flat"><i class="fa fa-book"></i></button>
                 </div>
                 ';
             })
@@ -156,17 +160,89 @@ class OrderanController extends Controller
         return response(null, 204);
     }
 
-    // public function cetakBarcode(Request $request)
-    // {
-    //     $dataproduk = array();
-    //     foreach ($request->id_produk as $id) {
-    //         $produk = Produk::find($id);
-    //         $dataproduk[] = $produk;
-    //     }
+    public function exportCSV()
+    {
+        $orderan = Orderan::get();
+     
+// Generate a timestamp for the filename
+$timestamp = date('YmdHis');
 
-    //     $no  = 1;
-    //     $pdf = PDF::loadView('produk.barcode', compact('dataproduk', 'no'));
-    //     $pdf->setPaper('a4', 'potrait');
-    //     return $pdf->stream('produk.pdf');
-    // }
+// Set the headers to download the file with the timestamp in the filename
+header('Content-Type: text/csv');
+header('Content-Disposition: attachment; filename="orderan_'.$timestamp.'.csv"');
+    
+        // Create a new instance of the League CSV Writer
+        $csv = Writer::createFromString('');
+    
+        // Add the header row
+        $csv->insertOne([
+            'ID Orderan',
+            'Kode Tanda Penerima',
+            'Nama Customer',
+            'Alamat Customer',
+            'Telepon Customer',
+            'Nama Barang',
+            'Jumlah Barang',
+            'Berat Barang',
+            'Nama Penerima',
+            'Alamat Penerima',
+            'Telepon Penerima',
+            'Supir',
+            'No. Mobil',
+            'Keterangan',
+            'Tanggal Pengambilan',
+            'Tanggal Kirim',
+            'Tanggal Terima',
+            'Harga',
+            'Created At',
+            'Updated At'
+        ]);
+    
+        // Add the data rows
+        foreach ($orderan as $order) {
+            $csv->insertOne([
+                $order->id_orderan,
+                $order->kode_tanda_penerima,
+                $order->nama_customer,
+                $order->alamat_customer,
+                $order->telepon_customer,
+                $order->nama_barang,
+                $order->jumlah_barang,
+                $order->berat_barang,
+                $order->nama_penerima,
+                $order->alamat_penerima,
+                $order->telepon_penerima,
+                $order->supir,
+                $order->no_mobil,
+                $order->keterangan,
+                $order->tanggal_pengambilan,
+                $order->tanggal_kirim,
+                $order->tanggal_terima,
+                $order->harga,
+                $order->created_at,
+                $order->updated_at
+            ]);
+        }
+    
+        // Return the CSV file as a response
+        return response($csv->__toString());
+    }
+
+    public function exportPDF($id)
+{
+    $orderan = Orderan::find($id);
+
+    // Membuat file PDF
+    $options = new Options();
+    $options->setIsRemoteEnabled(true);
+    $dompdf = new Dompdf($options);
+    $dompdf->loadHtml(view('orderan.pdf', compact('orderan'))->render());
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    // Menghasilkan file PDF dan mengirimkan ke browser
+    return $dompdf->stream('orderan'.$orderan->kode_tanda_penerima . $orderan->created_at . '.pdf');
+}
+    
+
 }

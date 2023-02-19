@@ -14,6 +14,8 @@ use App\Http\Controllers\{
     SettingController,
     SupplierController,
     HargaController,
+    CustomerController,
+    PenerimaController,
     OrderanController,
     SuratAngkutController,
     DaftarMuatController,
@@ -57,14 +59,25 @@ Route::group(['middleware' => 'auth'], function () {
         
         Route::get('/harga/data', [HargaController::class, 'data'])->name('harga.data');
         Route::resource('/harga', HargaController::class);
+
+        Route::get('/customer/data', [CustomerController::class, 'data'])->name('customer.data');
+        Route::resource('/customer', CustomerController::class);
+        Route::get('/penerima/data', [PenerimaController::class, 'data'])->name('penerima.data');
+        Route::resource('/penerima', PenerimaController::class);
         
         Route::get('/orderan/data', [OrderanController::class, 'data'])->name('orderan.data');
+        Route::get('/orderan/exportCSV', [OrderanController::class, 'exportCSV'])->name('orderan.exportCSV');
+        Route::get('/orderan/exportPDF/{id}', [OrderanController::class, 'exportPDF'])->name('orderan.exportPDF');
         Route::resource('/orderan', OrderanController::class);
+
         
-        Route::get('/sa/data', [SuratAngkutController::class, 'data'])->name('sa.data');
-        Route::resource('/sa', SuratAngkutController::class);
+        Route::get('/surat_angkut/data', [SuratAngkutController::class, 'data'])->name('surat_angkut.data');
+        Route::get('/surat_angkut/exportCSV', [SuratAngkutController::class, 'exportCSV'])->name('surat_angkut.exportCSV');
+        Route::get('/surat_angkut/exportPDF/{id}', [SuratAngkutController::class, 'exportPDF'])->name('surat_angkut.exportPDF');
+        Route::resource('/surat_angkut', SuratAngkutController::class);
 
         Route::get('/dm/data', [DaftarMuatController::class, 'data'])->name('dm.data');
+        Route::get('/dm/exportCSV', [DaftarMuatController::class, 'exportCSV'])->name('dm.exportCSV');
         Route::resource('/dm', DaftarMuatController::class);
 
         Route::get('/pengeluaran/data', [PengeluaranController::class, 'data'])->name('pengeluaran.data');
