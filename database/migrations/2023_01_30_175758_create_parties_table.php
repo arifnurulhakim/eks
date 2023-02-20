@@ -18,16 +18,15 @@ class CreatePartiesTable extends Migration
             
            
             $table->string('code_party');
-            $table->string('code_daftar_muat');
+            $table->string('kode_dm');
             $table->Integer('nomor_sa');
 
             $table->string('nama_customer');
             $table->string('alamat_customer');
             $table->string('telepon_customer');
 
-            $table->integer('nama_barang');
-            $table->integer('jumlah_barang');
-            $table->integer('berat_barang');
+            $table->integer('total_jumlah_barang');
+            $table->integer('total_berat_barang');
             
             $table->string('nama_penerima');
             $table->string('alamat_penerima');
@@ -38,17 +37,9 @@ class CreatePartiesTable extends Migration
             $table->string('no_mobil');
             $table->text('keterangan');
 
-            $table->timestamp('tanggal_pengambilan')->nullable();
             $table->timestamp('tanggal_kirim')->nullable();
             $table->timestamp('tanggal_terima')->nullable();
             
-            $table->integer('harga');
-            $table->integer('total_harga');
-            $table->integer('total_jumlah_sa');
-
-            $table->integer('total_harga_dm');
-            $table->integer('total_jumlah_dm');
-
             $table->timestamps();
             
         });

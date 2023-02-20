@@ -32,6 +32,7 @@
                             <th>nama penerima</th>
                             <th>Jumlah Barang</th>
                             <th>Berat Barang</th>
+                            <th>Keterangan</th>
                             <th>harga</th>
                             <th>total_harga</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
