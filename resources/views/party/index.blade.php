@@ -1,12 +1,12 @@
 @extends('layouts.master')
 
 @section('title')
-    Daftar dm
+    Daftar Party
 @endsection
 
 @section('breadcrumb')
     @parent
-    <li class="active">Daftar dm</li>
+    <li class="active">Daftar Party</li>
 @endsection
 
 @section('content')
@@ -14,8 +14,8 @@
     <div class="col-lg-12">
         <div class="box">
             <div class="box-header with-border">
-                <button onclick="addForm('{{ route('dm.exportfilter') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i>export SCV dengan filter</button>
-                <a href="{{ route('dm.exportCSV') }}" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-file-excel-o"></i> Export CSV</a>
+            <button onclick="addForm('{{ route('party.exportfilter') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i>export CSV dengan filter</button>
+                <a href="{{ route('party.exportCSV') }}" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-file-excel-o"></i> Export CSV</a>
             </div>
 
             <div class="box-body table-responsive">
@@ -24,17 +24,23 @@
                     <table class="table table-stiped table-bordered">
                         <thead>
                             <th width="5%">No</th>
+                            <th>Code Party</th>
                             <th>Kode DM</th>
                             <th>Nomor SA</th>
-                            <th>Supir</th>
-                            <th>No Mobil</th>
-                            <th>nama customer</th>
-                            <th>nama penerima</th>
+                            <th>Nama Customer</th>
+                            <th>Alamat Customer</th>
+                            <th>Telepon Customer</th>
                             <th>Jumlah Barang</th>
                             <th>Berat Barang</th>
+                            <th>Total Harga</th>
+                            <th>Nama Penerima</th>
+                            <th>Alamat Penerima</th>
+                            <th>Telepon Penerima</th>
+                            <th>Supir</th>
+                            <th>No Mobil</th>
                             <th>Keterangan</th>
-                            <th>harga</th>
-                            <th>total_harga</th>
+                            <th>Tanggal Kirim</th>
+                            <th>Tanggal Terima</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
                     </table>
@@ -44,7 +50,7 @@
     </div>
 </div>
 
-@includeIf('daftar_muat.form')
+@includeIf('party.form')
 @endsection
 
 @push('scripts')
@@ -58,28 +64,35 @@
             serverSide: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('dm.data') }}',
+                url: '{{ route('party.data') }}',
             },
             columns: [
               
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
-                {data: 'kode_daftar_muat'},
+                {data: 'kode_party'},
+                {data: 'kode_dm'},
                 {data: 'nomor_sa'},
-                {data: 'supir'},
-                {data: 'no_mobil'},
                 {data: 'nama_customer'},
-                {data: 'nama_penerima'},
+                {data: 'alamat_customer'},
+                {data: 'telepon_customer'},
                 {data: 'jumlah_barang'},
                 {data: 'berat_barang'},
-                {data: 'keterangan'},
-                {data: 'harga'},
                 {data: 'total_harga'},
+                {data: 'nama_penerima'},
+                {data: 'alamat_penerima'},
+                {data: 'telepon_penerima'},
+                {data: 'supir'},
+                {data: 'no_mobil'},
+                {data: 'keterangan'},
+                {data: 'tanggal_kirim'},
+                {data: 'tanggal_terima'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });
-       
+
         
     });
+
     function addForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Tambah Produk');
@@ -87,18 +100,7 @@
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);
         $('#modal-form [name=_method]').val('post');
-
     }
-
-    // function addForm(url) {
-    //     $('#modal-form').modal('show');
-    //     $('#modal-form .modal-title').text('Tambah Produk');
-
-    //     $('#modal-form form')[0].reset();
-    //     $('#modal-form form').attr('action', url);
-    //     $('#modal-form [name=_method]').val('post');
-    //     $('#modal-form [name=kode_tanda_penerima]').focus();
-    // }
 
     // function editForm(url) {
     //     $('#modal-form').modal('show');

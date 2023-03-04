@@ -19,6 +19,7 @@ use App\Http\Controllers\{
     OrderanController,
     SuratAngkutController,
     DaftarMuatController,
+    PartyController,
     UserController,
 };
 use Illuminate\Support\Facades\Route;
@@ -78,7 +79,13 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/dm/data', [DaftarMuatController::class, 'data'])->name('dm.data');
         Route::get('/dm/exportCSV', [DaftarMuatController::class, 'exportCSV'])->name('dm.exportCSV');
+        Route::post('/dm/exportfilter', [DaftarMuatController::class, 'exportfilter'])->name('dm.exportfilter');
         Route::resource('/dm', DaftarMuatController::class);
+
+        Route::get('/party/data', [PartyController::class, 'data'])->name('party.data');
+        Route::get('/party/exportCSV', [PartyController::class, 'exportCSV'])->name('party.exportCSV');
+        Route::post('/party/exportfilter', [PartyController::class, 'exportfilter'])->name('party.exportfilter');
+        Route::resource('/party', PartyController::class);
 
         Route::get('/pengeluaran/data', [PengeluaranController::class, 'data'])->name('pengeluaran.data');
         Route::resource('/pengeluaran', PengeluaranController::class);

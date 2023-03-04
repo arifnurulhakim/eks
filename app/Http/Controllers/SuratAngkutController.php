@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Surat_angkut;
 use App\Models\Daftar_muat;
 use App\Models\Orderan;
+use App\Models\Party;
 use League\Csv\Writer;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -83,14 +84,27 @@ class SuratAngkutController extends Controller
             $Surat_angkut->tanggal_pengambilan = $orderan->tanggal_pengambilan;
             $Surat_angkut->harga = $orderan->harga;
             $Surat_angkut->save();
+            
             if(!empty($Surat_angkut)){
+                $daftar_muat = new Daftar_muat();
+                // Memeriksa apakah ada data di database dengan nilai supir dan no_mobil yang sama
+                $existing_daftar_muat = Daftar_muat::select('kode_daftar_muat')->where('supir', $orderan->supir)
+                ->where('no_mobil', $orderan->no_mobil)
+                ->first();
 
+                if ($existing_daftar_muat) {
+                // Jika data sudah ada, gunakan kode_daftar_muat yang sama dengan data yang ada
+                $daftar_muat->kode_daftar_muat = $existing_daftar_muat->kode_daftar_muat;
+                } else {
+                // Jika data tidak ada, jalankan langkah-langkah seperti biasa
+              
+                $max_kode = Daftar_muat::max('kode_daftar_muat');
+                $new_kode = $max_kode + 1;
 
-            $daftar_muat = new Daftar_muat();
-
+                $daftar_muat->kode_daftar_muat = $new_kode;
+                }
             $total_harga = ($orderan->jumlah_barang * $orderan->berat_barang) * $orderan->harga;
-
-            $daftar_muat->kode_daftar_muat = $request->nomor_sa;
+            
             $daftar_muat->nomor_sa = $request->nomor_sa;
             $daftar_muat->supir = $orderan->supir;
             $daftar_muat->no_mobil = $orderan->no_mobil;
@@ -105,6 +119,49 @@ class SuratAngkutController extends Controller
             $daftar_muat->keterangan = $orderan->keterangan;
             $daftar_muat->save();
             
+            }
+            if (!empty($daftar_muat)){
+                $party = new Party();
+                // Memeriksa apakah ada data di database dengan nilai supir dan no_mobil yang sama
+                $existing_party = Party::select('kode_party')
+                ->where('nama_customer', $orderan->nama_customer)
+                ->where('nama_penerima', $orderan->nama_penerima)
+                ->first();
+
+                if ($existing_party) {
+                // Jika data sudah ada, gunakan kode_daftar_muat yang sama dengan data yang ada
+                $party->kode_party = $existing_party->kode_party;
+                } else {
+                // Jika data tidak ada, jalankan langkah-langkah seperti biasa
+              
+                $max_kode = Daftar_muat::max('kode_daftar_muat');
+                $new_kode = $max_kode + 1;
+
+                $daftar_muat->kode_daftar_muat = $new_kode;
+                }
+                $total_harga = ($orderan->jumlah_barang * $orderan->berat_barang) * $orderan->harga;
+
+                $party->kode_dm = $daftar_muat->kode_daftar_muat;
+                $party->nomor_sa = $request->nomor_sa;
+                $party->nama_customer = $orderan->nama_customer;
+                $party->alamat_customer = $orderan->alamat_customer;
+                $party->telepon_customer = $orderan->telepon_customer;
+
+                $party->jumlah_barang = $orderan->jumlah_barang;
+                $party->berat_barang = $orderan->berat_barang;
+
+                $party->nama_penerima = $orderan->nama_penerima;
+                $party->alamat_penerima = $orderan->alamat_penerima;
+                $party->telepon_penerima = $orderan->telepon_penerima;
+
+                $party->supir = $orderan->supir;
+                $party->no_mobil = $orderan->no_mobil;
+                $party->keterangan = $orderan->keterangan;
+                
+
+                $party->save();
+
+
             }
             return response()->json('berhasil', 200);
         }else{

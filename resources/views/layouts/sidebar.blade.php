@@ -75,6 +75,11 @@
                     <i class="fa fa-truck"></i> <span>Daftar Muat</span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('party.index') }}">
+                    <i class="fa fa-truck"></i> <span>Daftar Party</span>
+                </a>
+            </li>
             <li class="header">TRANSAKSI</li>
             <li>
                 <a href="{{ route('pengeluaran.index') }}">

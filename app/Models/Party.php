@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Party extends Model
 {
     use HasFactory;
+
+    protected $table = 'parties';
+    protected $primaryKey = 'id_party';
+    protected $guarded = [];
 }

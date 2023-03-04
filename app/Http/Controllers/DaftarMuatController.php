@@ -24,8 +24,8 @@ class DaftarMuatController extends Controller
             ->addColumn('aksi', function ($daftar_muat) {
                 return '
                 <div class="btn-group">
-                    <button type="button" onclick="editForm(`'. route('dm.update', $daftar_muat->id_dm) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`'. route('dm.destroy', $daftar_muat->id_dm) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+
+                    <button type="button" onclick="deleteData(`'. route('dm.destroy',$daftar_muat->id_dm).'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>
                 ';
             })
@@ -192,6 +192,63 @@ class DaftarMuatController extends Controller
     public function exportCSV()
 {
     $daftar_muat = Daftar_muat::get()->toArray();
+
+    $total_berat = 0;
+    $total_semua_harga = 0;
+    foreach($daftar_muat as $dm) {
+        $total_berat += $dm['berat_barang'];
+        $total_semua_harga += $dm['total_harga'];
+    }
+    $daftar_muat[] = ['', '', '', '', '', ''];
+    $daftar_muat[] = ['Total Berat', $total_berat, '', '', '', ''];
+    $daftar_muat[] = ['Total Semua Harga',  $total_semua_harga, '', '', ''];
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="dm_' . date('Ymd_His') . '.csv"',
+    ];
+
+    $callback = function () use ($daftar_muat) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, array_keys($daftar_muat[0]));
+        foreach ($daftar_muat as $row) {
+            fputcsv($file, $row);
+        }
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
+    public function exportfilter(Request $request)
+{
+    $kode_daftar_muat = $request->kode_daftar_muat;
+    $nomor_sa = $request->nomor_sa;
+    $supir = $request->supir;
+    $no_mobil = $request->no_mobil;
+    $nama_customer = $request->nama_customer;
+    $nama_penerima = $request->nama_penerima;
+
+
+    $daftar_muat = Daftar_muat::when($kode_daftar_muat, function ($query) use ($kode_daftar_muat) {
+        return $query->where('kode_daftar_muat', $kode_daftar_muat);
+    })
+    ->when($nomor_sa, function ($query) use ($nomor_sa) {
+        return $query->where('nomor_sa', $nomor_sa);
+    })
+    ->when($supir, function ($query) use ($supir) {
+        return $query->where('supir', $supir);
+    })
+    ->when($no_mobil, function ($query) use ($no_mobil) {
+        return $query->where('no_mobil', $no_mobil);
+    })
+    ->when($nama_customer, function ($query) use ($nama_customer) {
+        return $query->where('nama_customer', $nama_customer);
+    })
+    ->when($nama_penerima, function ($query) use ($nama_penerima) {
+        return $query->where('nama_penerima', $nama_penerima);
+    })
+    ->get()->toArray();
+
 
     $total_berat = 0;
     $total_semua_harga = 0;
