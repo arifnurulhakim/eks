@@ -7,7 +7,7 @@ use App\Models\Surat_angkut;
 use App\Models\Orderan;
 use App\Models\Daftar_muat;
 use App\Models\Party;
-
+use Illuminate\Support\Facades\DB;
 class PartyController extends Controller
 {
     public function index()
@@ -17,7 +17,10 @@ class PartyController extends Controller
 
     public function data()
     {
-        $party = Party::get();
+        $party = DB::table('parties')
+        ->leftJoin('surat_angkuts', 'parties.nomor_sa', '=', 'surat_angkuts.nomor_sa')
+        ->leftJoin('orderans', 'surat_angkuts.kode_tanda_penerima', '=', 'orderans.kode_tanda_penerima')
+        ->select('parties.*','orderans.tagihan_by','orderans.status as status','orderans.tanggal_pengambilan as tanggal_pengambilan','orderans.tanggal_kirim as tanggal_kirim','orderans.tanggal_terima as tanggal_terima','orderans.tanggal_ditagihkan as tanggal_ditagihkan')->get();
 
         return datatables()
             ->of($party)

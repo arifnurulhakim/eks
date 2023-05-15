@@ -39,8 +39,13 @@
                             <th>Supir</th>
                             <th>No Mobil</th>
                             <th>Keterangan</th>
-                            <th>Tanggal Kirim</th>
-                            <th>Tanggal Terima</th>
+                            <th>status</th>
+                            <th>beban tagihan oleh</th>
+                            <th>Tanggal Pengambilan</th>
+                            <th>Tanggal Dikirim</th>
+                            <th>Tanggal dikembalikan</th>
+                            <th>Tanggal Ditangihkan</th>
+                            
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
                     </table>
@@ -84,8 +89,38 @@
                 {data: 'supir'},
                 {data: 'no_mobil'},
                 {data: 'keterangan'},
+                {
+                    data: 'status',
+                    render: function(data, type, row, meta){
+                        if (data === 1) {
+                            return "Diambil";
+                        } else if (data === 2) {
+                            return "Dikirim";
+                        } else if (data === 3) {
+                            return "Dikembalikan";
+                        } else if (data === 4) {
+                            return "Ditagihkan";
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {
+                    data: 'tagihan_by',
+                    render: function(data, type, row, meta){
+                        if (data === 1) {
+                            return "Pengirim";
+                        } else if (data === 2) {
+                            return "Penerima";
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {data: 'tanggal_pengambilan'},
                 {data: 'tanggal_kirim'},
                 {data: 'tanggal_terima'},
+                {data: 'tanggal_ditagihkan'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });

@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     PenerimaController,
     OrderanController,
     SuratAngkutController,
+    InvoiceController,
     DaftarMuatController,
     PartyController,
     UserController,
@@ -73,9 +74,17 @@ Route::group(['middleware' => 'auth'], function () {
 
         
         Route::get('/surat_angkut/data', [SuratAngkutController::class, 'data'])->name('surat_angkut.data');
+        Route::get('/surat_angkut/update_status/{id}', [SuratAngkutController::class, 'update_status'])->name('surat_angkut.update_status');
         Route::get('/surat_angkut/exportCSV', [SuratAngkutController::class, 'exportCSV'])->name('surat_angkut.exportCSV');
         Route::get('/surat_angkut/exportPDF/{id}', [SuratAngkutController::class, 'exportPDF'])->name('surat_angkut.exportPDF');
         Route::resource('/surat_angkut', SuratAngkutController::class);
+
+        Route::get('/invoice/data', [InvoiceController::class, 'data'])->name('invoice.data');
+        Route::get('/invoice/update_status/{id}', [InvoiceController::class, 'update_status'])->name('invoice.update_status');
+        Route::get('/invoice/exportCSV', [InvoiceController::class, 'exportCSV'])->name('invoice.exportCSV');
+        Route::get('/invoice/exportPDF/{id}', [InvoiceController::class, 'exportPDF'])->name('invoice.exportPDF');
+        Route::post('/invoice/exportfilter', [InvoiceController::class, 'exportfilter'])->name('invoice.exportfilter');
+        Route::resource('/invoice', InvoiceController::class);
 
         Route::get('/dm/data', [DaftarMuatController::class, 'data'])->name('dm.data');
         Route::get('/dm/exportCSV', [DaftarMuatController::class, 'exportCSV'])->name('dm.exportCSV');

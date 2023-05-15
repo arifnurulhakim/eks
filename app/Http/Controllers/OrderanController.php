@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Orderan;
 use App\Models\Harga;
+use App\Models\Customer;
+use App\Models\Penerima;
 use League\Csv\Writer;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -12,7 +14,9 @@ class OrderanController extends Controller
 {
     public function index()
     {
-        return view('orderan.index');
+        $customer = Harga::select('nama_customer')->get();
+        $penerima = Harga::select('nama_penerima')->get();
+        return view('orderan.index',compact('customer','penerima'));
     }
 
     public function data()
@@ -23,12 +27,17 @@ class OrderanController extends Controller
             ->of($orderan)
             ->addIndexColumn()
             ->addColumn('aksi', function ($orderan) {
+                $disabled = '';
+                if ($orderan->status > 1 ) {
+                    $disabled = 'disabled';
+                }
                 return '
                 <div class="btn-group">
-                    <button type="button" onclick="editForm(`'. route('orderan.update', $orderan->id_orderan) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`'. route('orderan.destroy', $orderan->id_orderan) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
-                    <button type="button" onclick="exportPDF(`'. route('orderan.exportPDF', $orderan->id_orderan) .'`)" class="btn btn-xs btn-success btn-flat"><i class="fa fa-book"></i></button>
+                    <button type="button" onclick="editForm(`'. route('orderan.update', $orderan->id_orderan) .'`)" class="btn btn-xs btn-info btn-flat" '. $disabled .'><i class="fa fa-pencil"></i></button>
+                    <button type="button" onclick="deleteData(`'. route('orderan.destroy', $orderan->id_orderan) .'`)" class="btn btn-xs btn-danger btn-flat" '. $disabled .'><i class="fa fa-trash"></i></button>
+                    <button type="button" onclick="exportPDF(`'. route('orderan.exportPDF', $orderan->id_orderan) .'`)" class="btn btn-xs btn-success btn-flat" ><i class="fa fa-book"></i></button>
                 </div>
+                
                 ';
             })
             ->rawColumns(['aksi'])
@@ -54,31 +63,62 @@ class OrderanController extends Controller
     public function store(Request $request)
     {
         $get_nama_customer = $request->nama_customer;
-        $get_alamat_customer = $request->alamat_customer;
-        $get_alamat_penerima = $request->alamat_penerima;
+        $get_nama_penerima = $request->nama_penerima;
         
-        $get_harga = Harga::where('nama_customer', $get_nama_customer)
-                        ->where('alamat_customer', $get_alamat_customer)
-                        ->where('alamat_penerima', $get_alamat_penerima)
+        $get_customer = Customer::where('nama_customer', $get_nama_customer)->first();
+        $get_penerima = Penerima::where('nama_penerima', $get_nama_penerima)->first();
+        // dd($get_customer);
+
+        // $get_alamat_customer = $get_customer->alamat_customer;
+        // $get_alamat_penerima = $get_penerima->alamat_penerima;
+        
+        $get_harga = Harga::where('nama_customer', $get_customer->nama_customer)
+                        ->where('nama_penerima', $get_penerima->nama_penerima)
                         ->first();
-        $harga = ($request->berat_barang * $get_harga->harga) * $request->jumlah_barang;
+                        // dd($get_harga);
+        $jenis_harga = '';
+        $berat_barang=0;
+        if($request->jenis_harga == 'kg'){
+            $jenis_harga = $get_harga->harga_kg;
+        }else if($request->jenis_harga == 'ball'){
+            $jenis_harga = $get_harga->harga_ball;
+            if($request->berat_barang > 1){
+                $berat_barang = 1;
+            }
+        }else if($request->jenis_harga == 'tonase'){
+            $jenis_harga = $get_harga->harga_tonase;
+        }
+       
+        if($request->berat_barang == null){
+            $berat_barang = 1;
+        }else{
+            $berat_barang = $request->berat_barang;
+        }
+        $harga = ($berat_barang * $jenis_harga) * $request->jumlah_barang;
    
         $orderan = new Orderan();
         $orderan->kode_tanda_penerima = $request->kode_tanda_penerima;
-        $orderan->nama_customer = $request->nama_customer;
-        $orderan->alamat_customer = $request->alamat_customer;
-        $orderan->telepon_customer = $request->telepon_customer;
+
+        $orderan->nama_customer = $get_customer->nama_customer;
+        $orderan->alamat_customer = $get_customer->alamat_customer;
+        $orderan->telepon_customer = $get_customer->telepon_customer;
+
         $orderan->nama_barang = $request->nama_barang;
         $orderan->jumlah_barang = $request->jumlah_barang;
         $orderan->berat_barang = $request->berat_barang;
-        $orderan->nama_penerima = $request->nama_penerima;
-        $orderan->alamat_penerima = $request->alamat_penerima;
-        $orderan->telepon_penerima = $request->telepon_penerima;
+
+        $orderan->nama_penerima = $get_penerima->nama_penerima;
+        $orderan->alamat_penerima = $get_penerima->alamat_penerima;
+        $orderan->telepon_penerima = $get_penerima->telepon_penerima;
+
         $orderan->supir = $request->supir;
         $orderan->no_mobil = $request->no_mobil;
         $orderan->keterangan = $request->keterangan;
         $orderan->tanggal_pengambilan = $request->tanggal_pengambilan;
         $orderan->harga = $harga;
+        $orderan->status = 1;
+        $orderan->tagihan_by = $request->tagihan_by;
+        $orderan->tanggal_pengambilan = now();
         $orderan->save();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -118,20 +158,19 @@ class OrderanController extends Controller
     public function update(Request $request, $id)
     {
         $orderan = Orderan::find($id);
-        $orderan->id_orderan = $request->kode_tanda_penerima;
+        $orderan->kode_tanda_penerima = $request->kode_tanda_penerima;
         $orderan->nama_customer = $request->nama_customer;
-        $orderan->alamat_customer = $request->alamat_customer;
-        $orderan->telepon_customer = $request->telepon_customer;
+       
         $orderan->nama_barang = $request->nama_barang;
         $orderan->jumlah_barang = $request->jumlah_barang;
         $orderan->berat_barang = $request->berat_barang;
         $orderan->nama_penerima = $request->nama_penerima;
-        $orderan->alamat_penerima = $request->alamat_penerima;
-        $orderan->telepon_penerima = $request->telepon_penerima;
+      
         $orderan->supir = $request->supir;
         $orderan->no_mobil = $request->no_mobil;
         $orderan->keterangan = $request->keterangan;
         $orderan->tanggal_pengambilan = $request->tanggal_pengambilan;
+        $orderan->tagihan_by = $request->tagihan_by;
         $orderan->update();
 
         return response()->json('Data berhasil disimpan', 200);

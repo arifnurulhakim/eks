@@ -1,12 +1,12 @@
 @extends('layouts.master')
 
 @section('title')
-    Daftar Orderan
+    Daftar Invoice
 @endsection
 
 @section('breadcrumb')
     @parent
-    <li class="active">Daftar Orderan</li>
+    <li class="active">Daftar Invoice</li>
 @endsection
 
 @section('content')
@@ -14,12 +14,9 @@
     <div class="col-lg-12">
         <div class="box">
             <div class="box-header with-border">
-                <button onclick="addForm('{{ route('orderan.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
-                <a href="{{ route('orderan.exportCSV') }}" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-file-excel-o"></i> Export CSV</a>
+            <button onclick="addForm('{{ route('invoice.exportfilter') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i>export CSV dengan filter</button>
+                <a href="{{ route('invoice.exportCSV') }}" class="btn btn-primary btn-xs btn-flat"><i class="fa fa-file-excel-o"></i> Export CSV</a>
             </div>
-            
-            
-
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-produk">
                     @csrf
@@ -27,28 +24,18 @@
                         <thead>
                            
                             <th width="5%">No</th>
+                            <th>Update Status</th>
                             <th>Kode Tanda Penerima</th>
+                            <th>Nomor surat angkut</th>
                             <th>nama customer</th>
                             <th>alamat customer</th>
-                            <th>telepon customer</th>
-                            <th>nama barang</th>
-                            <th>Jumlah Barang</th>
-                            <th>Berat Barang</th>
+                           
                             <th>Nama Penerima</th>
                             <th>Alamat Penerima</th>
-                            <th>Telepon Penerima</th>
-                            <th>Supir</th>
-                            <th>Nomor Mobil</th>
                             <th>Keterangan</th>
                             <th>harga</th>
                             <th>status</th>
                             <th>beban tagihan oleh</th>
-                            <th>Tanggal Pengambilan</th>
-                            <th>Tanggal Dikirim</th>
-                            <th>Tanggal dikembalikan</th>
-                            <th>Tanggal Ditanggihkan</th>
-                            <th>Tanggal Dibuat</th>
-                            
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
                     </table>
@@ -58,7 +45,7 @@
     </div>
 </div>
 
-@includeIf('orderan.form')
+@includeIf('surat_angkut.form')
 @endsection
 
 @push('scripts')
@@ -66,68 +53,56 @@
     let table;
 
     $(function () {
-table = $('.table').DataTable({
-responsive: true,
-processing: true,
-serverSide: true,
-autoWidth: false,
-ajax: {
-url: '{{ route('orderan.data') }}',
-},
-columns: [
-{data: 'DT_RowIndex', searchable: false, sortable: false},
-
-{data: 'kode_tanda_penerima'},
-{data: 'nama_customer'},
-{data: 'alamat_customer'},
-{data: 'telepon_customer'},
-{data: 'nama_barang'},
-{data: 'jumlah_barang'},
-{data: 'berat_barang'},
-{data: 'nama_penerima'},
-{data: 'alamat_penerima'},
-{data: 'telepon_penerima'},
-{data: 'supir'},
-{data: 'no_mobil'},
-{data: 'keterangan'},
-{data: 'harga'},
-{
-    data: 'status',
-    render: function(data, type, row, meta){
-        if (data === 1) {
-            return "Diambil";
-        } else if (data === 2) {
-            return "Dikirim";
-        } else if (data === 3) {
-            return "Dikembalikan";
-        } else if (data === 4) {
-            return "Ditagihkan";
-        } else {
-            return "";
-        }
-    }
-},
-{
-    data: 'tagihan_by',
-    render: function(data, type, row, meta){
-        if (data === 1) {
-            return "Pengirim";
-        } else if (data === 2) {
-            return "Penerima";
-        } else {
-            return "";
-        }
-    }
-},
-
-{data: 'tanggal_pengambilan'},
-{data: 'tanggal_kirim'},
-{data: 'tanggal_terima'},
-{data: 'tanggal_ditagihkan'},
-{data: 'created_at'},
-{data: 'aksi', searchable: false, sortable: false},
-],
-});
+        table = $('.table').DataTable({
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            autoWidth: false,
+            ajax: {
+                url: '{{ route('invoice.data') }}',
+            },
+            columns: [
+                {data: 'DT_RowIndex', searchable: false, sortable: false},
+                {data: 'update_status', searchable: false, sortable: false},
+                {data: 'nomor_sa'},
+                {data: 'kode_tanda_penerima'},
+                {data: 'nama_customer'},
+                {data: 'alamat_customer'},
+                {data: 'nama_penerima'},
+                {data: 'alamat_penerima'},
+                {data: 'keterangan'},
+                {data: 'harga'},
+                {
+                    data: 'status',
+                    render: function(data, type, row, meta){
+                        if (data === 1) {
+                            return "Diambil";
+                        } else if (data === 2) {
+                            return "Dikirim";
+                        } else if (data === 3) {
+                            return "Dikembalikan";
+                        } else if (data === 4) {
+                            return "Ditagihkan";
+                        } else {
+                            return "";
+                        }
+                    }
+                }, 
+                {
+                    data: 'tagihan_by',
+                    render: function(data, type, row, meta){
+                        if (data === 1) {
+                            return "Pengirim";
+                        } else if (data === 2) {
+                            return "Penerima";
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+              
+            ]
+        });
 
         $('#modal-form').validator().on('submit', function (e) {
             if (! e.preventDefault()) {
@@ -145,13 +120,13 @@ columns: [
     });
 
     function addForm(url) {
+ 
         $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Tambah Produk');
+        $('#modal-form .modal-title').text('Pilih yang sudah di tagihkan');
 
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);
         $('#modal-form [name=_method]').val('post');
-        $('#modal-form [name=kode_tanda_penerima]').focus();
     }
 
     function editForm(url) {
@@ -166,7 +141,6 @@ columns: [
         $.get(url)
             .done((response) => {
                 $('#modal-form [name=nomor_sa]').val(response.nomor_sa);
-                $('#modal-form [name=id_orderan]').val(response.id_orderan);
                 $('#modal-form [name=kode_tanda_penerima]').val(response.kode_tanda_penerima);
                 $('#modal-form [name=nama_customer]').val(response.nama_customer);
                 $('#modal-form [name=alamat_customer]').val(response.alamat_customer);
@@ -184,8 +158,6 @@ columns: [
                 $('#modal-form [name=tanggal_pengambilan]').val(response.tanggal_pengambilan);
                 $('#modal-form [name=tanggal_terima]').val(response.tanggal_terima);
                 $('#modal-form [name=harga]').val(response.harga);
-                $('#modal-form [name=status]').val(response.status);
-                $('#modal-form [name=tangihan_by]').val(response.tagihan_by);
                 $('#modal-form [name=created_at]').val(response.created_at);
             })
             .fail((errors) => {
@@ -212,7 +184,12 @@ columns: [
     function exportPDF(url) {
         window.location.href = url;
     }
-   
+
+    function updateStatus(url) {
+        if (confirm('Apakah Anda yakin ingin mengubah status?')) {
+            window.location.href = url;
+        }
+    }
 
 
     // function deleteSelected(url) {

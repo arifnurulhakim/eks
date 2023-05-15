@@ -24,6 +24,7 @@
                         <thead>
                            
                             <th width="5%">No</th>
+                            <th>Update Status</th>
                             <th>Kode Tanda Penerima</th>
                             <th>Nomor surat angkut</th>
                             <th>nama customer</th>
@@ -39,9 +40,12 @@
                             <th>Nomor Mobil</th>
                             <th>Keterangan</th>
                             <th>harga</th>
+                            <th>status</th>
+                            <th>beban tagihan oleh</th>
                             <th>Tanggal Pengambilan</th>
                             <th>Tanggal Dikirim</th>
-                            <th>Tanggal Diterima</th>
+                            <th>Tanggal dikembalikan</th>
+                            <th>Tanggal Ditanggihkan</th>
                             <th>Tanggal Dibuat</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
@@ -70,6 +74,7 @@
             },
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
+                {data: 'update_status', searchable: false, sortable: false},
                 {data: 'nomor_sa'},
                 {data: 'kode_tanda_penerima'},
                 {data: 'nama_customer'},
@@ -85,9 +90,38 @@
                 {data: 'no_mobil'},
                 {data: 'keterangan'},
                 {data: 'harga'},
+                {
+                    data: 'status',
+                    render: function(data, type, row, meta){
+                        if (data === 1) {
+                            return "Diambil";
+                        } else if (data === 2) {
+                            return "Dikirim";
+                        } else if (data === 3) {
+                            return "Dikembalikan";
+                        } else if (data === 4) {
+                            return "Ditagihkan";
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {
+                    data: 'tagihan_by',
+                    render: function(data, type, row, meta){
+                        if (data === 1) {
+                            return "Pengirim";
+                        } else if (data === 2) {
+                            return "Penerima";
+                        } else {
+                            return "";
+                        }
+                    }
+                },
                 {data: 'tanggal_pengambilan'},
                 {data: 'tanggal_kirim'},
                 {data: 'tanggal_terima'},
+                {data: 'tanggal_ditagihkan'},
                 {data: 'created_at'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
@@ -173,6 +207,13 @@
     function exportPDF(url) {
         window.location.href = url;
     }
+
+    function updateStatus(url) {
+        if (confirm('Apakah Anda yakin ingin mengubah status?')) {
+            window.location.href = url;
+        }
+    }
+
 
     // function deleteSelected(url) {
     //     if ($('input:checked').length > 1) {

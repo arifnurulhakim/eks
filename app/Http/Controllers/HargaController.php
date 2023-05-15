@@ -68,7 +68,9 @@ class HargaController extends Controller
             $harga->alamat_customer = $customer->alamat_customer;
             $harga->nama_penerima = $request->nama_penerima;
             $harga->alamat_penerima = $penerima->alamat_penerima;
-            $harga->harga = $request->harga;
+            $harga->harga_kg = $request->harga_kg;
+            $harga->harga_ball = $request->harga_ball;
+            $harga->harga_tonase = $request->harga_tonase;
             $harga->save();
         }
         return response()->json('Data berhasil disimpan', 200);

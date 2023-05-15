@@ -24,7 +24,9 @@
                         <th>Alamat customer</th>
                         <th>Nama Penerima</th>
                         <th>Alamat penerima</th>
-                        <th>Harga</th>
+                        <th>Harga/kg</th>
+                        <th>Harga/ball</th>
+                        <th>Harga/tonase</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
                     </thead>
                 </table>
@@ -55,7 +57,9 @@
                 {data: 'alamat_customer'},
                 {data: 'nama_penerima'},
                 {data: 'alamat_penerima'},
-                {data: 'harga'},
+                {data: 'harga_kg'},
+                {data: 'harga_ball'},
+                {data: 'harga_tonase'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });
@@ -100,7 +104,9 @@
                 $('#modal-form [name=alamat_customer]').val(response.alamat_customer);
                 $('#modal-form [name=nama_penerima]').val(response.nama_penerima);
                 $('#modal-form [name=alamat_penerima]').val(response.alamat_penerima);
-                $('#modal-form [name=harga]').val(response.harga);
+                $('#modal-form [name=harga_kg]').val(response.harga_kg);
+                $('#modal-form [name=harga_ball]').val(response.harga_ball);
+                $('#modal-form [name=harga_tonase]').val(response.harga_tonase);
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data');

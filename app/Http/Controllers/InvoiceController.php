@@ -16,18 +16,21 @@ use LaravelDaily\Invoices\Classes\party;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 
 
-class SuratAngkutController extends Controller
+class InvoiceController extends Controller
 {
     public function index()
     {
-        $orderans = Orderan::all();
-        return view('surat_angkut.index', compact('orderans'));
+        $orderans = Orderan::where('orderans.status', 3);
+        return view('invoice.index', compact('orderans'));
     }
 
     public function data()
     {
-        $surat_angkut = DB::table('surat_angkuts')
-        ->leftJoin('orderans', 'surat_angkuts.kode_tanda_penerima', '=', 'orderans.kode_tanda_penerima')
+        // $surat_angkut = DB::table('surat_angkuts')
+        // ->leftJoin('orderans', 'surat_angkuts.kode_tanda_penerima', '=', 'orderans.kode_tanda_penerima')->where('orderans.status = 3')
+        // ->select('surat_angkuts.*', 'orderans.status as status','orderans.tanggal_pengambilan as tanggal_pengambilan','orderans.tanggal_kirim as tanggal_kirim','orderans.tanggal_terima as tanggal_terima')
+        // ->get();
+        $surat_angkut = DB::table('orderans')->leftjoin('surat_angkuts', 'orderans.kode_tanda_penerima', '=','surat_angkuts.kode_tanda_penerima')->where('orderans.status', '=', 3)
         ->select('surat_angkuts.*','orderans.tagihan_by', 'orderans.status as status','orderans.tanggal_pengambilan as tanggal_pengambilan','orderans.tanggal_kirim as tanggal_kirim','orderans.tanggal_terima as tanggal_terima','orderans.tanggal_ditagihkan as tanggal_ditagihkan')
         ->get();
         // dd($surat_angkut);
@@ -38,22 +41,18 @@ class SuratAngkutController extends Controller
             ->addIndexColumn()
             ->addColumn('update_status', function ($surat_angkut) {
                 $disabled = '';
-                if ($surat_angkut->status != 2 ) {
+                if ($surat_angkut->status != 3 ) {
                     $disabled = 'disabled';
                 }
                 return '
-                <button type="button" onclick="updateStatus(`'. route('surat_angkut.update_status', $surat_angkut->id_sa) .'`)" class="btn btn-xs btn-warning btn-flat" '. $disabled .'><i class="fa fa-edit"></i> Update Status</button>';
+                <button type="button" onclick="updateStatus(`'. route('invoice.update_status', $surat_angkut->id_sa) .'`)" class="btn btn-xs btn-warning btn-flat" '. $disabled .'><i class="fa fa-edit"></i> Update Status</button>';
             })
     
             ->addColumn('aksi', function ($surat_angkut) {
-                $disabled = '';
-                if ($surat_angkut->status > 1 ) {
-                    $disabled = 'disabled';
-                }
                 return '
                     <div class="btn-group">
-                        <button type="button" onclick="editForm(`'. route('surat_angkut.update', $surat_angkut->id_sa) .'`)" class="btn btn-xs btn-info btn-flat" '. $disabled .'><i class="fa fa-pencil"></i></button>
-                        <button type="button" onclick="deleteData(`'. route('surat_angkut.destroy', $surat_angkut->id_sa) .'`)" class="btn btn-xs btn-danger btn-flat"'. $disabled .'><i class="fa fa-trash"></i></button>
+                        <button type="button" onclick="editForm(`'. route('surat_angkut.update', $surat_angkut->id_sa) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
+                        <button type="button" onclick="deleteData(`'. route('surat_angkut.destroy', $surat_angkut->id_sa) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                         <button type="button" onclick="exportPDF(`'. route('surat_angkut.exportPDF', $surat_angkut->id_sa) .'`)" class="btn btn-xs btn-success btn-flat"><i class="fa fa-book"></i></button>
                     </div>
                 ';
@@ -66,11 +65,10 @@ class SuratAngkutController extends Controller
         $orderan = Orderan::where('kode_tanda_penerima', $surat_angkut->kode_tanda_penerima)->first();
         // dd( $surat_angkut);
             if ($orderan) {
-                $orderan->status = 3;
-                $orderan->tanggal_terima= now();
+                $orderan->status = 4;
                 $orderan->update();
                 $orderans = Orderan::all();
-                return view('surat_angkut.index', compact('orderans'));
+                return view('invoice.index', compact('orderans'));
             }
 
     }
@@ -306,17 +304,17 @@ class SuratAngkutController extends Controller
 
     public function exportCSV()
 {
-    $surat_angkut = Surat_angkut::get()->toArray();
+$party = Party::get()->toArray();
 
     $headers = [
         'Content-Type' => 'text/csv',
-        'Content-Disposition' => 'attachment; filename="sa_' . date('Ymd_His') . '.csv"',
+        'Content-Disposition' => 'attachment; filename="party_' . date('Ymd_His') . '.csv"',
     ];
 
-    $callback = function () use ($surat_angkut) {
+    $callback = function () use ($party) {
         $file = fopen('php://output', 'w');
-        fputcsv($file, array_keys($surat_angkut[0]));
-        foreach ($surat_angkut as $row) {
+        fputcsv($file, array_keys($party[0]));
+        foreach ($party as $row) {
             fputcsv($file, $row);
         }
         fclose($file);
@@ -329,12 +327,7 @@ public function exportPDF($id)
 {
     $surat_angkut = Surat_angkut::find($id);
 
-    // ...\
-    
-    $orderan = Orderan::where('kode_tanda_penerima', $surat_angkut->kode_tanda_penerima)->first();
-    $orderan->status = 2;
-    $orderan->tanggal_kirim = now();
-    $orderan->update();
+    // ...
 
     // Membuat file PDF
     $options = new Options();
@@ -350,8 +343,66 @@ public function exportPDF($id)
     $dompdf->stream($pdfFileName);
     if($pdfFileName){
     // Return a redirect to the 'surat_angkut.index' route with the $orderans data
-    return view('surat_angkut.index', compact('orderans'));
+    return view('invoice.index', compact('orderans'));
     }
+}
+public function exportfilter(Request $request)
+{
+    $nama_customer = $request->nama_customer;
+    $nama_penerima = $request->nama_penerima;
+    
+    $party = Party::when($kode_party, function ($query) use ($kode_party) {
+        return $query->where('kode_party', $kode_party);
+    })
+    ->when($kode_dm, function ($query) use ($kode_dm) {
+        return $query->where('kode_dm', $kode_dm);
+    })
+    ->when($nomor_sa, function ($query) use ($nomor_sa) {
+        return $query->where('nomor_sa', $nomor_sa);
+    })
+    ->when($nama_customer, function ($query) use ($nama_customer) {
+        return $query->where('nama_customer', $nama_customer);
+    })
+    ->when($nama_penerima, function ($query) use ($nama_penerima) {
+        return $query->where('nama_penerima', $nama_penerima);
+    })
+    ->when($supir, function ($query) use ($supir) {
+        return $query->where('supir', $supir);
+    })
+    ->when($no_mobil, function ($query) use ($no_mobil) {
+        return $query->where('no_mobil', $no_mobil);
+    })
+    ->get()->toArray();
+
+
+    $total_berat = 0;
+    $total_semua_harga = 0;
+    $total_jumlah_barang = 0;
+    foreach($party as $pt) {
+        $total_berat += $pt['berat_barang'];
+        $total_semua_harga += $pt['total_harga'];
+        $total_jumlah_barang += $pt['jumlah_barang'];
+    }
+    $party[] = ['', '', '', '', '', ''];
+    $party[] = ['Total Berat Barang', $total_berat, '', '', '', ''];
+    $party[] = ['Total Semua Harga',  $total_semua_harga, '', '', ''];
+    $party[] = ['Total Jumlah Barang',  $total_jumlah_barang, '', '', ''];
+
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="party_' . date('Ymd_His') . '.csv"',
+    ];
+
+    $callback = function () use ($party) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, array_keys($party[0]));
+        foreach ($party as $row) {
+            fputcsv($file, $row);
+        }
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
 }
 
 // public function exportPDF(Request $request)
@@ -428,5 +479,7 @@ public function exportPDF($id)
 //     // Mendownload invoice dalam format PDF
 //     return $invoice->download();
 // }
+
+
 
 }

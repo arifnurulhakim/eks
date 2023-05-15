@@ -39,9 +39,23 @@
                     </div>
 
                     <div class="form-group row">
-                        <label for="harga" class="col-lg-2 col-lg-offset-1 control-label">Harga</label>
+                        <label for="harga_kg" class="col-lg-2 col-lg-offset-1 control-label">harga/kg</label>
                         <div class="col-lg-6">
-                            <input type="number" name="harga" id="harga" class="form-control">
+                            <input type="number" name="harga_kg" id="harga_kg" class="form-control">
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="harga_ball" class="col-lg-2 col-lg-offset-1 control-label">harga/ball</label>
+                        <div class="col-lg-6">
+                            <input type="number" name="harga_ball" id="harga_ball" class="form-control">
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="harga_tonase" class="col-lg-2 col-lg-offset-1 control-label">harga/tonase</label>
+                        <div class="col-lg-6">
+                            <input type="number" name="harga_tonase" id="harga_tonase" class="form-control">
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>

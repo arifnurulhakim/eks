@@ -71,6 +71,11 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('invoice.index') }}">
+                    <i class="fa fa-truck"></i> <span>Invoice</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('dm.index') }}">
                     <i class="fa fa-truck"></i> <span>Daftar Muat</span>
                 </a>
